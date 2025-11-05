@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>25x25 Isometric Cube Grid</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow: auto;
+        }
+
+        h1 {
+            color: #fff;
+            text-align: center;
+            margin: 0 0 30px 0;
+        }
+
+        canvas {
+            border: 2px solid #555;
+            background: #000;
+            image-rendering: pixelated;
+        }
+
+        .info {
+            color: #999;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>25x25 Isometric Cube Grid</h1>
+    <canvas id="canvas"></canvas>
+    <div class="info" id="canvasInfo"></div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const canvasInfo = document.getElementById('canvasInfo');
+
+        const TILE_SIZE = 64;
+        const GRID_SIZE = 25;
+        const QUARTER_TILE = TILE_SIZE / 4;
+        const HALF_TILE = TILE_SIZE / 2;
+
+        // Load only one tile image
+        const cubeImage = new Image();
+        cubeImage.onload = renderIsometricGrid;
+        cubeImage.onerror = () => {
+            console.error('Error loading cube image');
+        };
+        cubeImage.src = "img/Ice Temple 001 Tile 1.png";
+
+        function renderIsometricGrid() {
+            // Calculate canvas size
+            const canvasWidth = (GRID_SIZE * HALF_TILE * 2) + TILE_SIZE;
+            const canvasHeight = (GRID_SIZE * QUARTER_TILE * 2) + TILE_SIZE;
+            
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2 - 400;  // Move grid up by 400 pixels
+
+            for (let row = 0; row < GRID_SIZE; row++) {
+                for (let col = 0; col < GRID_SIZE; col++) {
+                    drawCubeTile(row, col, centerX, centerY);
+                }
+            }
+
+            canvasInfo.textContent = `${GRID_SIZE}x${GRID_SIZE} Isometric Grid | Tile size: ${TILE_SIZE}x${TILE_SIZE}px`;
+        }
+
+        function drawCubeTile(row, col, centerX, centerY) {
+            let x = centerX;
+            let y = centerY;
+
+            // Position calculation
+            x += (col - row) * HALF_TILE;
+            y += (col + row) * QUARTER_TILE;
+
+            // Center the tile
+            x -= TILE_SIZE / 2;
+            y -= TILE_SIZE / 2;
+
+            // Draw the single cube image
+            ctx.drawImage(cubeImage, x, y, TILE_SIZE, TILE_SIZE);
+        }
+    </script>
+</body>
+</html>
